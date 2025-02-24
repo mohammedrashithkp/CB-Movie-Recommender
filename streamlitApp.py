@@ -15,7 +15,7 @@ try:
 except FileNotFoundError:
     # If files are not found locally, try to fetch them from LFS
     def load_lfs_file(file_path):
-        process = subprocess.run(["git", "lfs", "get", file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.run(["git", "lfs", "fetch", file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if process.returncode != 0:
             print("Error fetching LFS file:", file_path)
             return None
