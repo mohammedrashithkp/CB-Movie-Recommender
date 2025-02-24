@@ -10,9 +10,9 @@ movies_dict = None
 with gzip.open('similarity.pkl.gz','rb') as f:similarity = pickle.load(f)
 movies_dict = pickle.load(open('movie_dict.pkl', 'rb'))
 
-api_key_tmdb = st.secrets["general"]["API_KEY_TMDB"]
-if not api_key_tmdb:
-    st.error("API Key not found! Make sure it's set in Streamlit Secrets.")
+# api_key_tmdb = st.secrets["general"]["API_KEY_TMDB"]
+# if not api_key_tmdb:
+#     st.error("API Key not found! Make sure it's set in Streamlit Secrets.")
 
 movies = pd.DataFrame(movies_dict)
 movie_names = movies['title'].values
@@ -31,7 +31,7 @@ def recommend(movie):
     return recommended_movie_names,recommended_movie_posters
 
 def fetch_poster(movie_id):
-    url = "https://api.themoviedb.org/3/movie/{}?api_key={api_key_for_poster}&language=en-US".format(movie_id)
+    url = "https://api.themoviedb.org/3/movie/{}?api_key=8265bd1679663a7ea12ac168da84d2e8&language=en-US".format(movie_id)
     data = requests.get(url)
     data = data.json()
     poster_path = data['poster_path']
