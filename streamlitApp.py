@@ -2,45 +2,22 @@ import streamlit as st
 import pickle
 import pandas as pd
 import requests
-import subprocess
+import gzip 
 
 similarity = None
 movies_dict = None
 
-try:
-    # Try to load the files from local storage
-    similarity = pickle.load(open('similarity.pkl', 'rb'))
-    movies_dict = pickle.load(open('movie_dict.pkl', 'rb'))
+with gzip.open('similarity.pkl.gz','rb') as f:similarity = pickle.load(f)
+movies_dict = pickle.load(open('movie_dict.pkl', 'rb'))
 
-except FileNotFoundError:
-    # If files are not found locally, try to fetch them from LFS
-    def load_lfs_file(file_path):
-        process = subprocess.run(["git", "lfs", "fetch", file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        if process.returncode != 0:
-            print("Error fetching LFS file:", file_path)
-            return None
+api_key_tmdb = st.secrets["general"]["API_KEY_TMDB"]
+if not api_key_tmdb:
+    st.error("API Key not found! Make sure it's set in Streamlit Secrets.")
 
-        temp_file_path = f"/tmp/{file_path}"
-        with open(temp_file_path, "wb") as f:
-            f.write(process.stdout)
+movies = pd.DataFrame(movies_dict)
+movie_names = movies['title'].values
 
-        return temp_file_path
-
-    try:
-        similarity = pickle.load(open(load_lfs_file('similarity.pkl'), 'rb'))
-        movies_dict = pickle.load(open(load_lfs_file('movie_dict.pkl'), 'rb'))
-
-    except Exception as e:
-        print("Error loading files:", str(e))
-
-if similarity is None or movies_dict is None:
-    st.error("Failed to load files. Please check your GitHub LFS setup.")
-else:
-    # Load the data into a Pandas DataFrame
-    movies = pd.DataFrame(movies_dict)
-    movie_names = movies['title'].values
-
-    st.title('Content Based Movie Recommender System')
+st.title('Content Based Movie Recommender System')
 
 def recommend(movie):
     movie_idx = movies[movies['title']== movie].index[0]
@@ -54,7 +31,7 @@ def recommend(movie):
     return recommended_movie_names,recommended_movie_posters
 
 def fetch_poster(movie_id):
-    url = "https://api.themoviedb.org/3/movie/{}?api_key=8265bd1679663a7ea12ac168da84d2e8&language=en-US".format(movie_id)
+    url = "https://api.themoviedb.org/3/movie/{}?api_key={api_key_for_poster}&language=en-US".format(movie_id)
     data = requests.get(url)
     data = data.json()
     poster_path = data['poster_path']
