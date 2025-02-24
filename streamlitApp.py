@@ -2,12 +2,45 @@ import streamlit as st
 import pickle
 import pandas as pd
 import requests
+import subprocess
 
-similarity = pickle.load(open('similarity.pkl','rb'))
-movies_dict = pickle.load(open('movie_dict.pkl','rb'))
-movies = pd.DataFrame(movies_dict)
-movie_names = movies['title'].values
-st.title('Content Based Movie Recommender System')
+similarity = None
+movies_dict = None
+
+try:
+    # Try to load the files from local storage
+    similarity = pickle.load(open('similarity.pkl', 'rb'))
+    movies_dict = pickle.load(open('movie_dict.pkl', 'rb'))
+
+except FileNotFoundError:
+    # If files are not found locally, try to fetch them from LFS
+    def load_lfs_file(file_path):
+        process = subprocess.run(["git", "lfs", "get", file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if process.returncode != 0:
+            print("Error fetching LFS file:", file_path)
+            return None
+
+        temp_file_path = f"/tmp/{file_path}"
+        with open(temp_file_path, "wb") as f:
+            f.write(process.stdout)
+
+        return temp_file_path
+
+    try:
+        similarity = pickle.load(open(load_lfs_file('similarity.pkl'), 'rb'))
+        movies_dict = pickle.load(open(load_lfs_file('movie_dict.pkl'), 'rb'))
+
+    except Exception as e:
+        print("Error loading files:", str(e))
+
+if similarity is None or movies_dict is None:
+    st.error("Failed to load files. Please check your GitHub LFS setup.")
+else:
+    # Load the data into a Pandas DataFrame
+    movies = pd.DataFrame(movies_dict)
+    movie_names = movies['title'].values
+
+    st.title('Content Based Movie Recommender System')
 
 def recommend(movie):
     movie_idx = movies[movies['title']== movie].index[0]
