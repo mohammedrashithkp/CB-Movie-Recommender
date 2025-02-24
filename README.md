@@ -6,8 +6,18 @@ This Streamlit App recommends 5 movies from your Favourite Movie input based by 
 
 This Project Deals works with [TMDB 5000 Dataset](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata).It's written entirely in Python.
 
-## How to Set-Up
+## How to Set-Up[TODO]
+1.Clone the repo
 
+```bash
+git clone https://github.com/mohammedrashithkp/CB-Movie-Recommender.git && cd CB-Movie-Recommender
+```
+
+2.Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
 ## References
 - [CampusX YT Tutorial](https://youtu.be/1xtrIEwY_zY?feature=shared)
 - [Streamlit docs](https://docs.streamlit.io/)
