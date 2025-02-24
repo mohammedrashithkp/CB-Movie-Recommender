@@ -63,3 +63,7 @@ if st.button('Recommend Similar Movies'):
     with col5:
         st.text(recommended_movie_names[4])
         st.image(recommended_movie_posters[4])
+
+
+st.write('Creator : Mohammed Rashith KP')
+st.link_button("Discover Projects","https://github.com/mohammedrashithkp?tab=repositories")
