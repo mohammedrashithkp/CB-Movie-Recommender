@@ -17,7 +17,7 @@ movies_dict = pickle.load(open('movie_dict.pkl', 'rb'))
 movies = pd.DataFrame(movies_dict)
 movie_names = movies['title'].values
 
-st.title('Content Based Movie Recommender System')
+st.title('Content Based Movie Recommender')
 
 def recommend(movie):
     movie_idx = movies[movies['title']== movie].index[0]
